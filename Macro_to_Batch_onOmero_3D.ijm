@@ -18,25 +18,30 @@ if (roiManager("count")>0) {
 	roiManager("deselect");
 	roiManager("delete");
 }
-// Macro with arguments---------------------------------------------------------------
-values = getArgument();
-if (lengthOf(values)==0) {return showMessage("Put arguments with the macro");}
-a = split(values, "");
-size_min2D=parseInt(a[0]);
-size_min3D=parseInt(a[1]);    
-close_all=a[2];
 
-/*size_min2D=20;
- size_min3D=20;
- close_all=false;
-*/
 
-// Get informations from the image-----------------------------------------------------
+var size_min2D = 20;
+var size_min3D = 20;
+var close_all = false;
+
+// Macro with arguments --------------------------------------------------------------
+argument = getArgument();
+if(argument != "") {
+    args = split(argument, ',');
+    for (i = 0; i < args.length; i++) {
+        arg = split(args[i], '=');
+        if(arg[0] == "size_min2D") size_min2D = parseInt(arg[1]);
+        if(arg[0] == "size_min3D") size_min3D = parseInt(arg[1]);
+        if(arg[0] == "close_all") close_all = (arg[1] == "true");
+    }
+}
+
+// Get informations from the image ----------------------------------------------------
 image=getTitle();
 getDimensions(width, height, channels, slices, frames);
 Stack.getStatistics(voxelCount, mean, min, n_cells, stdDev);
 
-// 3D filtering and segmentation-------------------------------------------------------
+// 3D filtering and segmentation ------------------------------------------------------
 //run("Median 3D...", "x=4 y=4 z=4");
 setAutoThreshold("Otsu dark stack");
 run("Analyze Particles...", "size="+size_min2D+"-Infinity show=Masks clear stack");
@@ -47,7 +52,7 @@ getDimensions(width, height, channels, slices, frames);
 run("3D OC Options", "volume surface dots_size=5 font_size=10 redirect_to=none");
 run("3D Objects Counter", "threshold=1 slice="+slices+" min.="+size_min3D+" max.=5767168 objects statistics summary");
 
-// ROI detection from the same labels in a stack and assignment to a group-------------
+// ROI detection from the same labels in a stack and assignment to a group ------------
 for(i=0; i<n_cells; i++) {
 	resetThreshold();	
     setThreshold(i+1, i+1);
@@ -57,12 +62,12 @@ for(i=0; i<n_cells; i++) {
                 Stack.setSlice(z);
                 run("Create Selection");
                 
-// if there is no ROI in a plane -------------------------------------------------------        
+                // if there is no ROI in a plane ---------------------------------------
                 if(Roi.size > 0) {
                     Roi.setPosition(0, z, t);
                     Roi.setProperty("ROI", i+1);
                     
-// Use ROI groups, but only up to 255 for now-------------------------------------------
+                    // Use ROI groups, but only up to 255 for now ----------------------
                     if(n_cells < 256) Roi.setGroup(i+1);
                     roiManager("Add");
 	             }

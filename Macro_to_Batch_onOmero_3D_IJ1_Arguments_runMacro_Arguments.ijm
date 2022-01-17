@@ -23,29 +23,32 @@ if (roiManager("count")>0) {
  In this case values are stored in a temporary file "Parameters_Macro_toBatch.txt" (which is previously deleted)
  in the Fiji\macros directory. The values are read in the file during the following executions.
  */
-chemin=getDirectory("macros"); 
-execution=getArgument();
+macro_path = File.directory();
+execution = getArgument();
 
-if (execution=='0'){
+if (execution == '0') {
 	Dialog.create("3D segmentation Batch Macro on Omero");
 	Dialog.addNumber("2D Minimal size :", 20);
 	Dialog.addNumber("3D Minimal size :", 20);
 	Dialog.addCheckbox("Close all the images at the end", false);
 	Dialog.show();
-	size_min2D=Dialog.getNumber();
-	size_min3D=Dialog.getNumber();
-	close_all=Dialog.getChoice();
-	File.delete(chemin+"Parameters_Macro_toBatch.txt");
-	file_temp = File.open(chemin+"Parameters_Macro_toBatch.txt");
-	print(file_temp, size_min2D + "  \t" + size_min3D+ "  \t" + close_all);
+	size_min2D = Dialog.getNumber();
+	size_min3D = Dialog.getNumber();
+	if(Dialog.getCheckbox()) {
+		close_all = "true";
+	} else {
+		close_all = "false";
+	}
+	File.delete(macro_path + "Parameters_Macro_toBatch.txt");
+	file_temp = File.open(macro_path + "Parameters_Macro_toBatch.txt");
+	print(file_temp, size_min2D + "\t" + size_min3D+ "\t" + close_all);
 	File.close(file_temp);
+} else {
+	str=File.openAsString(macro_path + "Parameters_Macro_toBatch.txt");
+	lines=split(str, "\t");
+	size_min2D=(lines[0]);
+	size_min3D=(lines[1]);
+	close_all=(lines[2]);
 }
-if (execution!='0'){
-	str=File.openAsString(chemin+"Parameters_Macro_toBatch.txt"); 
-	lines=split(str,"\t");
-  	size_min2D=(lines[0]);
-  	size_min3D=(lines[1]);
-  	close_all=(lines[2]);
-}
-arguments=size_min2D+" "+size_min3D+" "+close_all;
-runMacro("Macro_to_Batch_onOmero_3D", arguments);
+arguments = "size_min2D="+size_min2D+",size_min3D="+size_min3D+",close_all="+close_all;
+runMacro(macro_path + "Macro_to_Batch_onOmero_3D.ijm", arguments);
