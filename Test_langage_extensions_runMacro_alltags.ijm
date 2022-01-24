@@ -72,30 +72,26 @@ for (i=0; i <image_ids.length; i++) {
 		    tags_chosen_image= Ext.list("tags", "image", chosen_image_ID);
 			tagIds_chosen_image= split(tags_chosen_image,",");
 			print("Image "+nom_image+", "+chosen_image_ID);
-			for (k = 0; k <tagIds_chosen_image.length; k++) {
-/*				print(tagIds_chosen_image[k]);
-			}
-		print("-------------");
-		}
-	}
-}		
-			exit;
-*/			
-				if (tag_exists==true){
-						if (tagIds_chosen_image[k]==tagId_IJ_Processed) {
-							print("Image "+nom_image+" "(+chosen_image_ID+)" already processed");
-							close(nom_image);
-						}
-						if (tagIds_chosen_image[k]!=tagId_IJ_Processed){
-							print("Le tag signature existe mais n'est pas lié à "+nom_image+", "+chosen_image_ID);
-							Tag_linked=Ext.link("image", chosen_image_ID, "tag", tagId_IJ_Processed);
-							print("le tag a été lié");
-						}
+			already_tagged = false;
+			if (tag_exists==true){
+				for (k = 0; k <tagIds_chosen_image.length; k++) {
+					if (tagIds_chosen_image[k]==tagId_IJ_Processed) {
+						already_tagged = true;
+					}
+					if (tagIds_chosen_image[k]!=tagId_IJ_Processed){
+					}
 				}
-				if(tag_exists==false) {
-					Tag_linked=Ext.link("image", chosen_image_ID, "tag", New_tagId_Processed);
-					print("image "+nom_image+" "(+chosen_image_ID+)" Liee nouveau Tag "+New_tagId_Processed);
+				if(already_tagged) {
+					print("Image "+nom_image+" ("+chosen_image_ID+") already processed");
+					close(nom_image);
+				} else {
+					print("Le tag signature existe mais n'est pas lié à "+nom_image+", "+chosen_image_ID);
+					Tag_linked=Ext.link("image", chosen_image_ID, "tag", tagId_IJ_Processed);
+					print("le tag a été lié");
 				}
+			} else {
+				Tag_linked=Ext.link("image", chosen_image_ID, "tag", New_tagId_Processed);
+				print("image "+nom_image+" "(+chosen_image_ID+)" Liee nouveau Tag "+New_tagId_Processed);
 			}
 		}
 	}
