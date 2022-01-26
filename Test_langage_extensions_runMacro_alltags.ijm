@@ -1,16 +1,8 @@
-/* Test macro for analysis on a dataset Omero
- *  Input : 3D TIF image
- *  Thresholding and 3D object detection and labeling 
- *  Transformation of labels into ROI groups : 3D ROIs
- *  Output : Image of labels (depending on choice), Results tab, Log window and ROIs
- *  F. Brau for Fiji/ImageJ 1.53f November 2021
+/* Macro using OMERO macro extensions calling the "Macro_to_Batch_onOmero_3D"
+Only the images having a dedicated tag chosen by the user will be processed
+After processing images will be tagged by a signature of the processing given by the user
+P. Pouchin and F. Brau for Fiji/ImageJ 1.53f November 2021
 */
-
-
-// Initialisation parameters--------------------------------------------------------------------------------------------
-run("Set Measurements...", "area limit redirect=None decimal=2");
-run("Colors...", "foreground=white background=black selection=yellow");
-run("Options...", "iterations=1 count=1 edm=Overwrite");
 
 // Login and choose the correct dataset---------------------------------------------------------------------------------
 Dialog.create("Login on your Omero database");
