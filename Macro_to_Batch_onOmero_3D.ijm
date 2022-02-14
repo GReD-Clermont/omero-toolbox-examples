@@ -88,4 +88,3 @@ for(i=0; i<n_cells; i++) {
 
 close("Mask of "+image);
 if (close_all) close("*");
-run("From ROI Manager");
